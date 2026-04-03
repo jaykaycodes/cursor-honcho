@@ -4,7 +4,7 @@ $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
-$RegisterTs = Join-Path $RepoRoot "plugins\honcho\scripts\register-with-claude.ts"
+$RegisterTs = Join-Path $RepoRoot "plugins\honcho\scripts\register-cursor-plugin.ts"
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho-dev"
 
 if (-not (Test-Path $RegisterTs)) {

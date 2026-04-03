@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Symlink honcho into ~/.cursor/plugins/local/ and register with ~/.claude/ so
-# Cursor's agent actually loads hooks, rules, MCP, and skills (symlink alone is not enough).
+# Symlink into ~/.cursor/plugins/local/ and register with Cursor (symlink alone is often not enough).
 # For SDK-only skills, use plugins/honcho-dev/scripts/install-local.sh
 #
 # After install: quit Cursor fully (Cmd+Q) and reopen, or Reload Window.
@@ -35,7 +34,7 @@ if ! command -v bun >/dev/null 2>&1; then
   echo "error: bun is required (https://bun.sh)" >&2
   exit 1
 fi
-bun "$SCRIPT_DIR/register-with-claude.ts" honcho "$TARGET"
+bun "$SCRIPT_DIR/register-cursor-plugin.ts" honcho "$TARGET"
 echo ""
 echo "Quit Cursor completely (Cmd+Q) and reopen, then check:"
 echo "  Settings → Rules (Honcho / honcho-memory), Features → MCP (honcho)."

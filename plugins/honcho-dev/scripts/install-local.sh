@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-# Symlink honcho-dev into ~/.cursor/plugins/local/ and register with ~/.claude/
-# (same bridge as the main Honcho plugin — see plugins/honcho/scripts/install-local.sh).
+# Symlink honcho-dev into ~/.cursor/plugins/local/ and register with Cursor (see honcho install-local.sh).
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-REGISTER_TS="$REPO_ROOT/plugins/honcho/scripts/register-with-claude.ts"
+REGISTER_TS="$REPO_ROOT/plugins/honcho/scripts/register-cursor-plugin.ts"
 TARGET="$HOME/.cursor/plugins/local/honcho-dev"
 
 if [[ ! -d "$PLUGIN_DIR" ]]; then

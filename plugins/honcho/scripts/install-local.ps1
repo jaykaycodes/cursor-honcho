@@ -1,11 +1,11 @@
-# Symlink + register Honcho (~/.claude bridge). Requires bun on PATH.
+# Symlink + register Honcho for Cursor. Requires bun on PATH.
 
 $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path "$PSScriptRoot\..").Path
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho"
 $Parent = Split-Path $Target
-$RegisterTs = Join-Path $PSScriptRoot "register-with-claude.ts"
+$RegisterTs = Join-Path $PSScriptRoot "register-cursor-plugin.ts"
 
 New-Item -ItemType Directory -Force -Path $Parent | Out-Null
 if (Test-Path $Target) {

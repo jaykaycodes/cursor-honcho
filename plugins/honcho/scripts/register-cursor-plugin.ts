@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
- * Merge this plugin into ~/.claude (installed_plugins.json + enabledPlugins).
- * Invoked by install-local scripts; needs only Bun stdlib.
+ * Enable a local install for Cursor's agent: merge into installed_plugins.json
+ * and enabledPlugins. Cursor uses ~/.claude/ for that data (path name is legacy).
  */
 import {
   existsSync,
@@ -15,7 +15,7 @@ import { join } from "node:path";
 
 const [, , name, rawPath] = process.argv;
 if (!name || !rawPath) {
-  console.error("usage: register-with-claude.ts <plugin-name> <install-dir>");
+  console.error("usage: register-cursor-plugin.ts <plugin-name> <install-dir>");
   process.exit(2);
 }
 
@@ -34,10 +34,10 @@ if (!existsSync(manifest)) {
 }
 
 const pluginId = `${name}@local`;
-const claudeDir = join(homedir(), ".claude");
-const pluginsDir = join(claudeDir, "plugins");
+const cursorAgentConfig = join(homedir(), ".claude");
+const pluginsDir = join(cursorAgentConfig, "plugins");
 const installedPath = join(pluginsDir, "installed_plugins.json");
-const settingsPath = join(claudeDir, "settings.json");
+const settingsPath = join(cursorAgentConfig, "settings.json");
 
 function loadJson(path: string): Record<string, unknown> {
   if (!existsSync(path)) return {};
@@ -83,6 +83,6 @@ const enabled =
 enabled[pluginId] = true;
 sdata.enabledPlugins = enabled;
 
-mkdirSync(claudeDir, { recursive: true });
+mkdirSync(cursorAgentConfig, { recursive: true });
 writeFileSync(settingsPath, `${JSON.stringify(sdata, null, 2)}\n`, "utf-8");
 console.log(`Enabled ${pluginId} in ${settingsPath}`);

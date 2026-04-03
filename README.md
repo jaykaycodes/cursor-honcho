@@ -21,9 +21,9 @@ If your organization uses [Cursor Teams or Enterprise](https://cursor.com/docs/p
 
 Clone this repository, then run the **install script** for each plugin you want (not only a manual symlink).
 
-The scripts link `~/.cursor/plugins/local/<name>` **and** register the plugin under `~/.claude/` (`installed_plugins.json` + `enabledPlugins`). On many Cursor builds, the symlink alone is **not** enough for hooks, rules, or skills to load.
+The scripts link `~/.cursor/plugins/local/<name>` **and** turn the plugin **on** in Cursor’s agent config (JSON files Cursor reads at startup). On many builds, the symlink alone is **not** enough for hooks, rules, or skills to load.
 
-**Requirements for the script:** [Bun](https://bun.sh) on your `PATH` (the installer uses a tiny Bun script to merge JSON into `~/.claude/`). The **Honcho** plugin also uses Bun for MCP and hooks whenever the agent runs.
+**Requirements for the script:** [Bun](https://bun.sh) on your `PATH` (`plugins/honcho/scripts/register-cursor-plugin.ts`). The **Honcho** plugin also uses Bun for MCP and hooks when the agent runs.
 
 **Honcho** (memory, MCP, hooks):
 
@@ -59,14 +59,14 @@ Marketplace **Browse** will not list local installs; that is normal.
 After a **full quit** (Cmd+Q / Alt+F4) and reopen:
 
 1. **On disk:** `~/.cursor/plugins/local/honcho/.cursor-plugin/plugin.json` (and/or `honcho-dev`).
-2. **Claude bridge:** `~/.claude/plugins/installed_plugins.json` should contain `honcho@local` / `honcho-dev@local` with your absolute `installPath`, and `~/.claude/settings.json` should have `"honcho@local": true` (etc.) under `enabledPlugins`.
+2. **Agent config:** Cursor keeps plugin enablement under `~/.claude/` on disk (legacy path name). You should see `honcho@local` / `honcho-dev@local` in `plugins/installed_plugins.json` and `enabledPlugins` in `settings.json` there after a successful install.
 3. **Honcho** — **Settings → Rules** and **MCP** as above.
 
 If rules or MCP still do not show: update Cursor, confirm **Bun** is on the `PATH` for the app, and try the third-party toggle above.
 
 ## Requirements
 
-- [Bun](https://bun.sh) — required for the **Honcho** plugin (MCP server and hook runners) and for **both** local install scripts (registration uses `register-with-claude.ts`).
+- [Bun](https://bun.sh) — required for the **Honcho** plugin (MCP server and hook runners) and for **both** local install scripts (`register-cursor-plugin.ts`).
 - **Honcho memory**: `HONCHO_API_KEY` from [app.honcho.dev](https://app.honcho.dev).
 
 **Honcho Dev** has no `package.json`; you do not run `bun install` there. **Honcho** still needs `bun install` in `plugins/honcho` for dependencies.
