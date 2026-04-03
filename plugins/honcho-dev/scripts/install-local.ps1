@@ -1,26 +1,14 @@
-# Symlink + register Honcho Dev (runs plugins/honcho/scripts/register-with-claude.sh).
+# Symlink + register Honcho Dev. Requires bun on PATH.
 
 $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
-$RegisterSh = Join-Path $RepoRoot "plugins\honcho\scripts\register-with-claude.sh"
+$RegisterTs = Join-Path $RepoRoot "plugins\honcho\scripts\register-with-claude.ts"
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho-dev"
 
-function Find-Bash {
-    $c = Get-Command bash -ErrorAction SilentlyContinue
-    if ($c) { return $c.Source }
-    foreach ($p in @(
-            "$env:ProgramFiles\Git\bin\bash.exe",
-            "${env:ProgramFiles(x86)}\Git\bin\bash.exe"
-        )) {
-        if (Test-Path $p) { return $p }
-    }
-    return $null
-}
-
-if (-not (Test-Path $RegisterSh)) {
-    Write-Error "Missing $RegisterSh — use the full monorepo (plugins/honcho + plugins/honcho-dev)."
+if (-not (Test-Path $RegisterTs)) {
+    Write-Error "Missing $RegisterTs — use the full monorepo (plugins/honcho + plugins/honcho-dev)."
     exit 1
 }
 
@@ -40,12 +28,12 @@ if (-not (Test-Path $manifest)) {
 }
 Write-Host ""
 
-$bash = Find-Bash
-if (-not $bash) {
-    Write-Error "bash not found. Install Git for Windows or run ./scripts/install-local.sh from Git Bash."
+$bun = Get-Command bun -ErrorAction SilentlyContinue
+if (-not $bun) {
+    Write-Error "bun not found. Install from https://bun.sh and ensure it is on PATH."
     exit 1
 }
 $targetResolved = (Resolve-Path $Target).Path
-& $bash $RegisterSh honcho-dev $targetResolved
+& bun $RegisterTs honcho-dev $targetResolved
 Write-Host ""
 Write-Host "Quit Cursor fully and reopen."

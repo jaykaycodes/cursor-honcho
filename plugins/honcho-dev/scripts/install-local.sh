@@ -7,15 +7,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-REGISTER_SH="$REPO_ROOT/plugins/honcho/scripts/register-with-claude.sh"
+REGISTER_TS="$REPO_ROOT/plugins/honcho/scripts/register-with-claude.ts"
 TARGET="$HOME/.cursor/plugins/local/honcho-dev"
 
 if [[ ! -d "$PLUGIN_DIR" ]]; then
   echo "error: could not resolve plugin directory" >&2
   exit 1
 fi
-if [[ ! -f "$REGISTER_SH" ]]; then
-  echo "error: missing $REGISTER_SH (expected monorepo layout: plugins/honcho + plugins/honcho-dev)" >&2
+if [[ ! -f "$REGISTER_TS" ]]; then
+  echo "error: missing $REGISTER_TS (expected monorepo layout: plugins/honcho + plugins/honcho-dev)" >&2
   exit 1
 fi
 
@@ -34,7 +34,11 @@ else
 fi
 echo ""
 
-"$REGISTER_SH" honcho-dev "$TARGET"
+if ! command -v bun >/dev/null 2>&1; then
+  echo "error: bun is required (https://bun.sh)" >&2
+  exit 1
+fi
+bun "$REGISTER_TS" honcho-dev "$TARGET"
 echo ""
 echo "Quit Cursor completely (Cmd+Q) and reopen."
 echo "If skills do not appear: Settings → Features → third-party plugins/skills (wording varies)."

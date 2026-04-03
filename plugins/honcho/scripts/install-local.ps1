@@ -1,23 +1,11 @@
-# Symlink + register Honcho (~/.claude bridge). Uses bash + register-with-claude.sh (needs Git Bash on Windows).
+# Symlink + register Honcho (~/.claude bridge). Requires bun on PATH.
 
 $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path "$PSScriptRoot\..").Path
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho"
 $Parent = Split-Path $Target
-$RegisterSh = Join-Path $PSScriptRoot "register-with-claude.sh"
-
-function Find-Bash {
-    $c = Get-Command bash -ErrorAction SilentlyContinue
-    if ($c) { return $c.Source }
-    foreach ($p in @(
-            "$env:ProgramFiles\Git\bin\bash.exe",
-            "${env:ProgramFiles(x86)}\Git\bin\bash.exe"
-        )) {
-        if (Test-Path $p) { return $p }
-    }
-    return $null
-}
+$RegisterTs = Join-Path $PSScriptRoot "register-with-claude.ts"
 
 New-Item -ItemType Directory -Force -Path $Parent | Out-Null
 if (Test-Path $Target) {
@@ -37,12 +25,12 @@ if (-not (Test-Path $manifest)) {
 }
 Write-Host ""
 
-$bash = Find-Bash
-if (-not $bash) {
-    Write-Error "bash not found. Install Git for Windows or run ./scripts/install-local.sh from Git Bash."
+$bun = Get-Command bun -ErrorAction SilentlyContinue
+if (-not $bun) {
+    Write-Error "bun not found. Install from https://bun.sh and ensure it is on PATH."
     exit 1
 }
 $targetResolved = (Resolve-Path $Target).Path
-& $bash $RegisterSh honcho $targetResolved
+& bun $RegisterTs honcho $targetResolved
 Write-Host ""
 Write-Host "Quit Cursor fully and reopen. Check Settings > Rules and MCP."

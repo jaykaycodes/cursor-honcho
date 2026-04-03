@@ -23,7 +23,7 @@ Clone this repository, then run the **install script** for each plugin you want 
 
 The scripts link `~/.cursor/plugins/local/<name>` **and** register the plugin under `~/.claude/` (`installed_plugins.json` + `enabledPlugins`). On many Cursor builds, the symlink alone is **not** enough for hooks, rules, or skills to load.
 
-**Requirements for the script:** `python3` on your PATH (the installer runs a few lines of Python to merge JSON into `~/.claude/`). **Honcho** still needs [Bun](#requirements) for MCP and hooks at runtime. On Windows, use **Git Bash** or WSL to run the `.sh` scripts, or run `install-local.ps1` (it shells out to `bash`; Git for Windows is the usual source).
+**Requirements for the script:** [Bun](https://bun.sh) on your `PATH` (the installer uses a tiny Bun script to merge JSON into `~/.claude/`). The **Honcho** plugin also uses Bun for MCP and hooks whenever the agent runs.
 
 **Honcho** (memory, MCP, hooks):
 
@@ -66,10 +66,10 @@ If rules or MCP still do not show: update Cursor, confirm **Bun** is on the `PAT
 
 ## Requirements
 
-- [Bun](https://bun.sh) — required for the **Honcho** plugin (MCP server and hook runners).
+- [Bun](https://bun.sh) — required for the **Honcho** plugin (MCP server and hook runners) and for **both** local install scripts (registration uses `register-with-claude.ts`).
 - **Honcho memory**: `HONCHO_API_KEY` from [app.honcho.dev](https://app.honcho.dev).
 
-**Honcho Dev** does not ship a Bun `package.json`; only **Honcho** needs `bun install` in its plugin directory.
+**Honcho Dev** has no `package.json`; you do not run `bun install` there. **Honcho** still needs `bun install` in `plugins/honcho` for dependencies.
 
 ## After you install
 
