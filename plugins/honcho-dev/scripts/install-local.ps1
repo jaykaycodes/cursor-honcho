@@ -1,14 +1,26 @@
-# Symlink + register Honcho Dev (uses register script from plugins/honcho).
+# Symlink + register Honcho Dev (runs plugins/honcho/scripts/register-with-claude.sh).
 
 $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
-$RegisterPy = Join-Path $RepoRoot "plugins\honcho\scripts\register-for-cursor-agent.py"
+$RegisterSh = Join-Path $RepoRoot "plugins\honcho\scripts\register-with-claude.sh"
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho-dev"
 
-if (-not (Test-Path $RegisterPy)) {
-    Write-Error "Missing $RegisterPy — use the full monorepo (plugins/honcho + plugins/honcho-dev)."
+function Find-Bash {
+    $c = Get-Command bash -ErrorAction SilentlyContinue
+    if ($c) { return $c.Source }
+    foreach ($p in @(
+            "$env:ProgramFiles\Git\bin\bash.exe",
+            "${env:ProgramFiles(x86)}\Git\bin\bash.exe"
+        )) {
+        if (Test-Path $p) { return $p }
+    }
+    return $null
+}
+
+if (-not (Test-Path $RegisterSh)) {
+    Write-Error "Missing $RegisterSh — use the full monorepo (plugins/honcho + plugins/honcho-dev)."
     exit 1
 }
 
@@ -28,13 +40,12 @@ if (-not (Test-Path $manifest)) {
 }
 Write-Host ""
 
-$py = Get-Command python3 -ErrorAction SilentlyContinue
-if (-not $py) { $py = Get-Command python -ErrorAction SilentlyContinue }
-if (-not $py) {
-    Write-Error "python3 is required to register the plugin in ~/.claude/"
+$bash = Find-Bash
+if (-not $bash) {
+    Write-Error "bash not found. Install Git for Windows or run ./scripts/install-local.sh from Git Bash."
     exit 1
 }
 $targetResolved = (Resolve-Path $Target).Path
-& $py.Source $RegisterPy honcho-dev $targetResolved
+& $bash $RegisterSh honcho-dev $targetResolved
 Write-Host ""
 Write-Host "Quit Cursor fully and reopen."

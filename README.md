@@ -23,7 +23,7 @@ Clone this repository, then run the **install script** for each plugin you want 
 
 The scripts link `~/.cursor/plugins/local/<name>` **and** register the plugin under `~/.claude/` (`installed_plugins.json` + `enabledPlugins`). On many Cursor builds, the symlink alone is **not** enough for hooks, rules, or skills to load.
 
-**Requirements for the script:** [Python 3](https://www.python.org/) (registration only). **Honcho** still needs [Bun](#requirements) for MCP and hooks at runtime.
+**Requirements for the script:** `python3` on your PATH (the installer runs a few lines of Python to merge JSON into `~/.claude/`). **Honcho** still needs [Bun](#requirements) for MCP and hooks at runtime. On Windows, use **Git Bash** or WSL to run the `.sh` scripts, or run `install-local.ps1` (it shells out to `bash`; Git for Windows is the usual source).
 
 **Honcho** (memory, MCP, hooks):
 

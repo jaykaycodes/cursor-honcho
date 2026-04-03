@@ -1,12 +1,23 @@
-# Symlink + register Honcho with Cursor's agent (~/.claude + ~/.cursor/plugins/local).
-# Requires Python 3 for registration (same as install-local.sh).
+# Symlink + register Honcho (~/.claude bridge). Uses bash + register-with-claude.sh (needs Git Bash on Windows).
 
 $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path "$PSScriptRoot\..").Path
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho"
 $Parent = Split-Path $Target
-$RegisterPy = Join-Path $PSScriptRoot "register-for-cursor-agent.py"
+$RegisterSh = Join-Path $PSScriptRoot "register-with-claude.sh"
+
+function Find-Bash {
+    $c = Get-Command bash -ErrorAction SilentlyContinue
+    if ($c) { return $c.Source }
+    foreach ($p in @(
+            "$env:ProgramFiles\Git\bin\bash.exe",
+            "${env:ProgramFiles(x86)}\Git\bin\bash.exe"
+        )) {
+        if (Test-Path $p) { return $p }
+    }
+    return $null
+}
 
 New-Item -ItemType Directory -Force -Path $Parent | Out-Null
 if (Test-Path $Target) {
@@ -26,14 +37,12 @@ if (-not (Test-Path $manifest)) {
 }
 Write-Host ""
 
-$py = Get-Command python3 -ErrorAction SilentlyContinue
-if (-not $py) { $py = Get-Command python -ErrorAction SilentlyContinue }
-if (-not $py) {
-    Write-Error "python3 is required to register the plugin in ~/.claude/"
+$bash = Find-Bash
+if (-not $bash) {
+    Write-Error "bash not found. Install Git for Windows or run ./scripts/install-local.sh from Git Bash."
     exit 1
 }
 $targetResolved = (Resolve-Path $Target).Path
-& $py.Source $RegisterPy honcho $targetResolved
+& $bash $RegisterSh honcho $targetResolved
 Write-Host ""
 Write-Host "Quit Cursor fully and reopen. Check Settings > Rules and MCP."
-Write-Host "Hooks run in the background; they usually do not appear as rows under Hooks settings."

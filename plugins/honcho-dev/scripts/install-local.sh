@@ -7,15 +7,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-REGISTER_PY="$REPO_ROOT/plugins/honcho/scripts/register-for-cursor-agent.py"
+REGISTER_SH="$REPO_ROOT/plugins/honcho/scripts/register-with-claude.sh"
 TARGET="$HOME/.cursor/plugins/local/honcho-dev"
 
 if [[ ! -d "$PLUGIN_DIR" ]]; then
   echo "error: could not resolve plugin directory" >&2
   exit 1
 fi
-if [[ ! -f "$REGISTER_PY" ]]; then
-  echo "error: missing $REGISTER_PY (expected monorepo layout: plugins/honcho + plugins/honcho-dev)" >&2
+if [[ ! -f "$REGISTER_SH" ]]; then
+  echo "error: missing $REGISTER_SH (expected monorepo layout: plugins/honcho + plugins/honcho-dev)" >&2
   exit 1
 fi
 
@@ -34,11 +34,7 @@ else
 fi
 echo ""
 
-if ! command -v python3 >/dev/null 2>&1; then
-  echo "error: python3 is required to register the plugin in ~/.claude/" >&2
-  exit 1
-fi
-python3 "$REGISTER_PY" honcho-dev "$TARGET"
+"$REGISTER_SH" honcho-dev "$TARGET"
 echo ""
 echo "Quit Cursor completely (Cmd+Q) and reopen."
 echo "If skills do not appear: Settings → Features → third-party plugins/skills (wording varies)."
