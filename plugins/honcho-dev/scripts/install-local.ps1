@@ -1,14 +1,19 @@
-# Symlink honcho-dev only into Cursor local plugins.
-$PluginDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-$Target = Join-Path $HOME ".cursor\plugins\local\honcho-dev"
+# Symlink + register Honcho Dev (uses register script from plugins/honcho).
 
-if (-not (Test-Path $PluginDir)) {
-    Write-Error "Could not resolve plugin directory"
+$ErrorActionPreference = "Stop"
+
+$PluginDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
+$RegisterPy = Join-Path $RepoRoot "plugins\honcho\scripts\register-for-cursor-agent.py"
+$Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho-dev"
+
+if (-not (Test-Path $RegisterPy)) {
+    Write-Error "Missing $RegisterPy — use the full monorepo (plugins/honcho + plugins/honcho-dev)."
     exit 1
 }
 
 New-Item -ItemType Directory -Force -Path (Split-Path $Target) | Out-Null
-if (Test-Path $Target) { Remove-Item -Recurse -Force $Target }
+if (Test-Path $Target) { Remove-Item $Target -Recurse -Force }
 New-Item -ItemType SymbolicLink -Path $Target -Target $PluginDir -Force | Out-Null
 
 Write-Host "Linked honcho-dev only:"
@@ -22,5 +27,14 @@ if (-not (Test-Path $manifest)) {
     Write-Host "OK: manifest present at $manifest"
 }
 Write-Host ""
-Write-Host "Reload Cursor (Developer: Reload Window), or fully quit and reopen."
-Write-Host "Note: local plugins do not show in the Marketplace list — check Rules / agent skills for Honcho Dev."
+
+$py = Get-Command python3 -ErrorAction SilentlyContinue
+if (-not $py) { $py = Get-Command python -ErrorAction SilentlyContinue }
+if (-not $py) {
+    Write-Error "python3 is required to register the plugin in ~/.claude/"
+    exit 1
+}
+$targetResolved = (Resolve-Path $Target).Path
+& $py.Source $RegisterPy honcho-dev $targetResolved
+Write-Host ""
+Write-Host "Quit Cursor fully and reopen."

@@ -1,14 +1,12 @@
-# Symlink this plugin into Cursor local plugins for development.
-# Docs: https://cursor.com/docs/plugins.md — ~/.cursor/plugins/local/<name>
-#
-# Usage: powershell -ExecutionPolicy Bypass -File install-local.ps1
-# Then reload Cursor (Developer: Reload Window).
+# Symlink + register Honcho with Cursor's agent (~/.claude + ~/.cursor/plugins/local).
+# Requires Python 3 for registration (same as install-local.sh).
 
 $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path "$PSScriptRoot\..").Path
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho"
 $Parent = Split-Path $Target
+$RegisterPy = Join-Path $PSScriptRoot "register-for-cursor-agent.py"
 
 New-Item -ItemType Directory -Force -Path $Parent | Out-Null
 if (Test-Path $Target) {
@@ -27,5 +25,15 @@ if (-not (Test-Path $manifest)) {
     Write-Host "OK: manifest present at $manifest"
 }
 Write-Host ""
-Write-Host "Reload Cursor (Developer: Reload Window), or fully quit and reopen."
-Write-Host "Note: local plugins do not show in the Marketplace list — check Settings > Rules and MCP for Honcho."
+
+$py = Get-Command python3 -ErrorAction SilentlyContinue
+if (-not $py) { $py = Get-Command python -ErrorAction SilentlyContinue }
+if (-not $py) {
+    Write-Error "python3 is required to register the plugin in ~/.claude/"
+    exit 1
+}
+$targetResolved = (Resolve-Path $Target).Path
+& $py.Source $RegisterPy honcho $targetResolved
+Write-Host ""
+Write-Host "Quit Cursor fully and reopen. Check Settings > Rules and MCP."
+Write-Host "Hooks run in the background; they usually do not appear as rows under Hooks settings."

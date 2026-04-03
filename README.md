@@ -19,7 +19,11 @@ If your organization uses [Cursor Teams or Enterprise](https://cursor.com/docs/p
 
 ## Install from source
 
-Clone this repository, then symlink the plugin(s) into Cursor’s local plugins directory.
+Clone this repository, then run the **install script** for each plugin you want (not only a manual symlink).
+
+The scripts link `~/.cursor/plugins/local/<name>` **and** register the plugin under `~/.claude/` (`installed_plugins.json` + `enabledPlugins`). On many Cursor builds, the symlink alone is **not** enough for hooks, rules, or skills to load.
+
+**Requirements for the script:** [Python 3](https://www.python.org/) (registration only). **Honcho** still needs [Bun](#requirements) for MCP and hooks at runtime.
 
 **Honcho** (memory, MCP, hooks):
 
@@ -29,7 +33,6 @@ cd plugins/honcho && bun install
 ```
 
 Windows (PowerShell): `.\scripts\install-local.ps1`
-Installs to `~/.cursor/plugins/local/honcho`.
 
 **Honcho Dev** (skills only):
 
@@ -39,23 +42,27 @@ cd plugins/honcho-dev
 ```
 
 Windows: `.\scripts\install-local.ps1`
-Installs to `~/.cursor/plugins/local/honcho-dev`.
 
 For both plugins, run both flows (two separate targets).
 
+### Hooks, rules, and what you see in Settings
+
+- **Hooks** (session start, after edits, etc.) run **automatically** when the agent runs. They are **not** listed as a per-plugin checklist under **Settings → Hooks** the way a single global `hooks.json` might be. To debug hook I/O, use the **Output** panel and choose **Hooks** (see [Hooks](https://cursor.com/docs/hooks.md)).
+- **Rules** from the plugin should appear under **Settings → Rules** (search for **Honcho** or `honcho-memory`). The bundled rule uses `alwaysApply: false`, so it may show as **Agent Decides** / on-request unless you change the mode.
+- **MCP** — **Settings → Features → Model Context Protocol** → **honcho** server.
+- **Third-party / Claude plugin bridge** — if nothing loads after a full quit and reopen, open **Settings → Features** and enable anything like **Include third-party plugins, skills, and configs** (wording varies by Cursor version).
+
 ### Verify a local install
 
-Plugins in `~/.cursor/plugins/local/` are loaded by Cursor, but they **do not appear as installable cards in the Marketplace** (only marketplace and team-catalog plugins do). That is expected.
+Marketplace **Browse** will not list local installs; that is normal.
 
-After **Developer: Reload Window** or a full **quit and reopen Cursor**:
+After a **full quit** (Cmd+Q / Alt+F4) and reopen:
 
-1. **On disk** — the manifest should exist, for example:
-   - macOS / Linux: `~/.cursor/plugins/local/honcho/.cursor-plugin/plugin.json`
-   - Windows: `%USERPROFILE%\.cursor\plugins\local\honcho\.cursor-plugin\plugin.json`
-2. **Honcho** — open **Settings → Rules** and search for **Honcho** / `honcho-memory`. Open **Settings → Features → Model Context Protocol** and confirm the **honcho** server is listed (toggle on if needed).
-3. **Honcho Dev** — skills show up like other agent skills (see Cursor [Skills](https://cursor.com/docs/skills.md)); there is no MCP entry for this plugin.
+1. **On disk:** `~/.cursor/plugins/local/honcho/.cursor-plugin/plugin.json` (and/or `honcho-dev`).
+2. **Claude bridge:** `~/.claude/plugins/installed_plugins.json` should contain `honcho@local` / `honcho-dev@local` with your absolute `installPath`, and `~/.claude/settings.json` should have `"honcho@local": true` (etc.) under `enabledPlugins`.
+3. **Honcho** — **Settings → Rules** and **MCP** as above.
 
-If nothing appears, update Cursor to the latest version, confirm **Bun** is on the `PATH` for the app you launch (not only in a subshell), and try a real restart instead of only reloading the window. If symlinks are blocked on your machine, copy the plugin folder into `.../local/honcho` instead of using the install script’s symlink.
+If rules or MCP still do not show: update Cursor, confirm **Bun** is on the `PATH` for the app, and try the third-party toggle above.
 
 ## Requirements
 

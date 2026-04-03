@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# Symlink the honcho (memory) plugin into Cursor local plugins.
-# Docs: https://cursor.com/docs/plugins.md — ~/.cursor/plugins/local/<name>
+# Symlink honcho into ~/.cursor/plugins/local/ and register with ~/.claude/ so
+# Cursor's agent actually loads hooks, rules, MCP, and skills (symlink alone is not enough).
 # For SDK-only skills, use plugins/honcho-dev/scripts/install-local.sh
 #
-# After linking, run **Developer: Reload Window** in Cursor (or restart Cursor).
+# After install: quit Cursor fully (Cmd+Q) and reopen, or Reload Window.
 
 set -euo pipefail
 
-PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 TARGET="$HOME/.cursor/plugins/local/honcho"
 
 if [[ ! -d "$PLUGIN_DIR" ]]; then
@@ -29,5 +30,14 @@ else
   echo "OK: manifest present at $TARGET/.cursor-plugin/plugin.json"
 fi
 echo ""
-echo "Reload Cursor (Developer: Reload Window), or fully quit and reopen."
-echo "Note: local plugins do not show in the Marketplace list — check Settings → Rules and MCP for Honcho."
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "error: python3 is required to register the plugin in ~/.claude/" >&2
+  exit 1
+fi
+python3 "$SCRIPT_DIR/register-for-cursor-agent.py" honcho "$TARGET"
+echo ""
+echo "Quit Cursor completely (Cmd+Q) and reopen, then check:"
+echo "  Settings → Rules (Honcho / honcho-memory), Features → MCP (honcho)."
+echo "  Hooks run in the background; there is usually no 'Honcho' row under Hooks settings."
+echo "  If nothing loads: Settings → Features → enable third-party plugins/skills (wording varies by version)."
