@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "bun run ${CURSOR_PLUGIN_ROOT}/hooks/session-start.ts",
+        "timeout": 30
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "bun run ${CURSOR_PLUGIN_ROOT}/hooks/session-end.ts",
+        "timeout": 30
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "bun run ${CURSOR_PLUGIN_ROOT}/hooks/post-tool-use.ts",
+        "timeout": 10,
+        "matcher": "Write|Edit|Bash|Task|write|search_replace|str_replace|run_terminal_cmd|NotebookEdit|delete_file|apply_patch"
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": "bun run ${CURSOR_PLUGIN_ROOT}/hooks/user-prompt.ts",
+        "timeout": 7
+      }
+    ],
+    "preCompact": [
+      {
+        "command": "bun run ${CURSOR_PLUGIN_ROOT}/hooks/pre-compact.ts",
+        "timeout": 20,
+        "matcher": "auto"
+      },
+      {
+        "command": "bun run ${CURSOR_PLUGIN_ROOT}/hooks/pre-compact.ts",
+        "timeout": 20,
+        "matcher": "manual"
+      }
+    ],
+    "stop": [
+      {
+        "command": "bun run ${CURSOR_PLUGIN_ROOT}/hooks/stop.ts",
+        "timeout": 10
+      }
+    ]
+  }
+}

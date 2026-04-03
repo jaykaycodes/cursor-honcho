@@ -1,0 +1,19 @@
+---
+description: Use Honcho persistent memory in Cursor — trust injected context, query via MCP, save conclusions
+alwaysApply: false
+---
+
+# Honcho memory (Cursor)
+
+You have persistent memory via [Honcho](https://honcho.dev). Context about the user, their preferences, and past work may be loaded automatically at session start.
+
+## How to use it
+
+- Trust Honcho context injected at session start when present. Act on it; do not ignore it or ask for things already recorded.
+- Use the Honcho MCP tools `chat` or `search` when you need context beyond what was loaded at startup.
+- Use `create_conclusion` to save new insights as you learn them (preferences, decisions, patterns, things to avoid).
+- The user should not have to repeat stable facts you have already stored.
+
+## Cross-tool setup
+
+If the user also uses Claude Code, they can link `cursor` and `claude_code` workspaces in `~/.honcho/config.json` under `hosts.*.linkedHosts` so context can flow between tools. See the plugin README.

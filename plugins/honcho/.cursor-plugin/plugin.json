@@ -1,0 +1,25 @@
+{
+  "name": "honcho",
+  "displayName": "Honcho",
+  "version": "0.2.4",
+  "description": "Persistent memory for Cursor using Honcho by Plastic Labs",
+  "author": {
+    "name": "Plastic Labs",
+    "email": "hello@plasticlabs.ai"
+  },
+  "homepage": "https://honcho.dev",
+  "repository": "https://github.com/plastic-labs/cursor-honcho",
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "context",
+    "ai",
+    "honcho",
+    "cursor",
+    "persistence"
+  ],
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./mcp.json",
+  "skills": "./skills/",
+  "rules": "./rules/"
+}

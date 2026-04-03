@@ -1,0 +1,5 @@
+**/node_modules/
+.DS_Store
+
+# Maintainer / team-only notes (not for the public repo)
+NOTES.md
