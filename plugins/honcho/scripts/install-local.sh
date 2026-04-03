@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-# Symlink into ~/.cursor/plugins/local/ and register with Cursor (symlink alone is often not enough).
+# Symlink the honcho plugin into Cursor local plugins.
 # For SDK-only skills, use plugins/honcho-dev/scripts/install-local.sh
 #
-# After install: quit Cursor fully (Cmd+Q) and reopen, or Reload Window.
+# After linking, run Developer: Reload Window (or restart Cursor).
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PLUGIN_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 TARGET="$HOME/.cursor/plugins/local/honcho"
 
 if [[ ! -d "$PLUGIN_DIR" ]]; then
@@ -29,14 +28,4 @@ else
   echo "OK: manifest present at $TARGET/.cursor-plugin/plugin.json"
 fi
 echo ""
-
-if ! command -v bun >/dev/null 2>&1; then
-  echo "error: bun is required (https://bun.sh)" >&2
-  exit 1
-fi
-bun "$SCRIPT_DIR/register-cursor-plugin.ts" honcho "$TARGET"
-echo ""
-echo "Quit Cursor completely (Cmd+Q) and reopen, then check:"
-echo "  Settings → Rules (Honcho / honcho-memory), Features → MCP (honcho)."
-echo "  Hooks run in the background; there is usually no 'Honcho' row under Hooks settings."
-echo "  If nothing loads: Settings → Features → enable third-party plugins/skills (wording varies by version)."
+echo "Reload Cursor (Developer: Reload Window) to pick up changes."

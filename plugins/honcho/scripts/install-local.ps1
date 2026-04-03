@@ -1,11 +1,12 @@
-# Symlink + register Honcho for Cursor. Requires bun on PATH.
+# Symlink this plugin into Cursor local plugins for development.
+# Usage: powershell -ExecutionPolicy Bypass -File install-local.ps1
+# Then reload Cursor (Developer: Reload Window).
 
 $ErrorActionPreference = "Stop"
 
 $PluginDir = (Resolve-Path "$PSScriptRoot\..").Path
 $Target = Join-Path $env:USERPROFILE ".cursor\plugins\local\honcho"
 $Parent = Split-Path $Target
-$RegisterTs = Join-Path $PSScriptRoot "register-cursor-plugin.ts"
 
 New-Item -ItemType Directory -Force -Path $Parent | Out-Null
 if (Test-Path $Target) {
@@ -25,12 +26,4 @@ if (-not (Test-Path $manifest)) {
 }
 Write-Host ""
 
-$bun = Get-Command bun -ErrorAction SilentlyContinue
-if (-not $bun) {
-    Write-Error "bun not found. Install from https://bun.sh and ensure it is on PATH."
-    exit 1
-}
-$targetResolved = (Resolve-Path $Target).Path
-& bun $RegisterTs honcho $targetResolved
-Write-Host ""
-Write-Host "Quit Cursor fully and reopen. Check Settings > Rules and MCP."
+Write-Host "Reload Cursor (Developer: Reload Window) to pick up changes."

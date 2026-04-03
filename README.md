@@ -19,11 +19,7 @@ If your organization uses [Cursor Teams or Enterprise](https://cursor.com/docs/p
 
 ## Install from source
 
-Clone this repository, then run the **install script** for each plugin you want (not only a manual symlink).
-
-The scripts link `~/.cursor/plugins/local/<name>` **and** turn the plugin **on** in Cursor’s agent config (JSON files Cursor reads at startup). On many builds, the symlink alone is **not** enough for hooks, rules, or skills to load.
-
-**Requirements for the script:** [Bun](https://bun.sh) on your `PATH` (`plugins/honcho/scripts/register-cursor-plugin.ts`). The **Honcho** plugin also uses Bun for MCP and hooks when the agent runs.
+Clone this repository, then run the install script for each plugin you want.
 
 **Honcho** (memory, MCP, hooks):
 
@@ -50,7 +46,7 @@ For both plugins, run both flows (two separate targets).
 - **Hooks** (session start, after edits, etc.) run **automatically** when the agent runs. They are **not** listed as a per-plugin checklist under **Settings → Hooks** the way a single global `hooks.json` might be. To debug hook I/O, use the **Output** panel and choose **Hooks** (see [Hooks](https://cursor.com/docs/hooks.md)).
 - **Rules** from the plugin should appear under **Settings → Rules** (search for **Honcho** or `honcho-memory`). The bundled rule uses `alwaysApply: false`, so it may show as **Agent Decides** / on-request unless you change the mode.
 - **MCP** — **Settings → Features → Model Context Protocol** → **honcho** server.
-- **Third-party / Claude plugin bridge** — if nothing loads after a full quit and reopen, open **Settings → Features** and enable anything like **Include third-party plugins, skills, and configs** (wording varies by Cursor version).
+- **Third-party plugins** — if nothing loads after a full quit and reopen, open **Settings → Features** and enable anything like **Include third-party plugins, skills, and configs** (wording varies by Cursor version).
 
 ### Verify a local install
 
@@ -59,14 +55,13 @@ Marketplace **Browse** will not list local installs; that is normal.
 After a **full quit** (Cmd+Q / Alt+F4) and reopen:
 
 1. **On disk:** `~/.cursor/plugins/local/honcho/.cursor-plugin/plugin.json` (and/or `honcho-dev`).
-2. **Agent config:** Cursor keeps plugin enablement under `~/.claude/` on disk (legacy path name). You should see `honcho@local` / `honcho-dev@local` in `plugins/installed_plugins.json` and `enabledPlugins` in `settings.json` there after a successful install.
-3. **Honcho** — **Settings → Rules** and **MCP** as above.
+2. **Honcho** — **Settings → Rules** and **MCP** as above.
 
 If rules or MCP still do not show: update Cursor, confirm **Bun** is on the `PATH` for the app, and try the third-party toggle above.
 
 ## Requirements
 
-- [Bun](https://bun.sh) — required for the **Honcho** plugin (MCP server and hook runners) and for **both** local install scripts (`register-cursor-plugin.ts`).
+- [Bun](https://bun.sh) — required for the **Honcho** plugin (MCP server and hook runners).
 - **Honcho memory**: `HONCHO_API_KEY` from [app.honcho.dev](https://app.honcho.dev).
 
 **Honcho Dev** has no `package.json`; you do not run `bun install` there. **Honcho** still needs `bun install` in `plugins/honcho` for dependencies.
