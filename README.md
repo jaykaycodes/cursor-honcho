@@ -73,6 +73,67 @@ If rules or MCP still do not show: update Cursor, confirm **Bun** is on the `PAT
 3. Enable the **honcho** MCP server under **Settings → Features → Model Context Protocol** if it is off.
 4. Use bundled skills as described in Cursor’s [Skills](https://cursor.com/docs/skills.md) documentation.
 
+## Configure Honcho (API key, peer, workspace)
+
+The `honcho` plugin reads configuration from:
+
+- Environment variables (best for first-time bootstrap)
+- `~/.honcho/config.json` (best for ongoing settings)
+
+### 1) Set your API key
+
+Get your key from [app.honcho.dev](https://app.honcho.dev), then set:
+
+**macOS / Linux**
+
+```bash
+export HONCHO_API_KEY="hch-your-key"
+```
+
+Add it to your shell profile (`~/.zshrc`, `~/.bashrc`, etc.), then fully restart Cursor.
+
+**Windows (PowerShell)**
+
+```powershell
+setx HONCHO_API_KEY "hch-your-key"
+```
+
+Then fully restart Cursor.
+
+### 2) Run guided setup in Cursor
+
+- Run `/honcho:setup` once to validate connectivity and create initial config files.
+- Run `/honcho:status` to confirm workspace, peer names, and health.
+- Run `/honcho:config` to change settings interactively.
+
+### 3) Configure peer/workspace manually (optional)
+
+Edit `~/.honcho/config.json` directly if you prefer:
+
+```jsonc
+{
+  "apiKey": "hch-v2-...",
+  "peerName": "jake",
+  "hosts": {
+    "cursor": {
+      "workspace": "cursor",
+      "aiPeer": "cursor"
+    }
+  },
+  "sessionStrategy": "per-directory",
+  "sessionPeerPrefix": true
+}
+```
+
+Useful values:
+
+- `peerName`: your user identity in Honcho
+- `hosts.cursor.workspace`: memory namespace (team/shared or personal)
+- `hosts.cursor.aiPeer`: AI identity for Cursor (default `cursor`)
+- `sessionStrategy`: `per-directory` (default), `git-branch`, or `chat-instance`
+
+If you also use other hosts/tools, you can add host blocks and `linkedHosts` in the same file to share readable context across tools while keeping writes local per host.
+
 ## Compared to Claude Code
 
 | Area | Claude | Cursor |
