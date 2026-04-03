@@ -15,4 +15,12 @@ Write-Host "Linked honcho-dev only:"
 Write-Host "  $PluginDir"
 Write-Host "  -> $Target"
 Write-Host ""
-Write-Host "Reload Cursor (Developer: Reload Window)."
+$manifest = Join-Path $Target ".cursor-plugin\plugin.json"
+if (-not (Test-Path $manifest)) {
+    Write-Warning "Expected $manifest (link may be broken)"
+} else {
+    Write-Host "OK: manifest present at $manifest"
+}
+Write-Host ""
+Write-Host "Reload Cursor (Developer: Reload Window), or fully quit and reopen."
+Write-Host "Note: local plugins do not show in the Marketplace list — check Rules / agent skills for Honcho Dev."

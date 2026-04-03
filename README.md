@@ -43,6 +43,20 @@ Installs to `~/.cursor/plugins/local/honcho-dev`.
 
 For both plugins, run both flows (two separate targets).
 
+### Verify a local install
+
+Plugins in `~/.cursor/plugins/local/` are loaded by Cursor, but they **do not appear as installable cards in the Marketplace** (only marketplace and team-catalog plugins do). That is expected.
+
+After **Developer: Reload Window** or a full **quit and reopen Cursor**:
+
+1. **On disk** — the manifest should exist, for example:
+   - macOS / Linux: `~/.cursor/plugins/local/honcho/.cursor-plugin/plugin.json`
+   - Windows: `%USERPROFILE%\.cursor\plugins\local\honcho\.cursor-plugin\plugin.json`
+2. **Honcho** — open **Settings → Rules** and search for **Honcho** / `honcho-memory`. Open **Settings → Features → Model Context Protocol** and confirm the **honcho** server is listed (toggle on if needed).
+3. **Honcho Dev** — skills show up like other agent skills (see Cursor [Skills](https://cursor.com/docs/skills.md)); there is no MCP entry for this plugin.
+
+If nothing appears, update Cursor to the latest version, confirm **Bun** is on the `PATH` for the app you launch (not only in a subshell), and try a real restart instead of only reloading the window. If symlinks are blocked on your machine, copy the plugin folder into `.../local/honcho` instead of using the install script’s symlink.
+
 ## Requirements
 
 - [Bun](https://bun.sh) — required for the **Honcho** plugin (MCP server and hook runners).

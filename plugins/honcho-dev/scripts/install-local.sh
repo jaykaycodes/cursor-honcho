@@ -20,4 +20,11 @@ echo "Linked honcho-dev only:"
 echo "  $PLUGIN_DIR"
 echo "  -> $TARGET"
 echo ""
-echo "Reload Cursor (Developer: Reload Window)."
+if [[ ! -f "$TARGET/.cursor-plugin/plugin.json" ]]; then
+  echo "warning: expected $TARGET/.cursor-plugin/plugin.json (symlink may be broken)" >&2
+else
+  echo "OK: manifest present at $TARGET/.cursor-plugin/plugin.json"
+fi
+echo ""
+echo "Reload Cursor (Developer: Reload Window), or fully quit and reopen."
+echo "Note: local plugins do not show in the Marketplace list — check Rules / agent skills for Honcho Dev."
